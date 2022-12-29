@@ -16,7 +16,7 @@ export default function Chat(){
 
 
     const usuarios = ["Pedrito","Juanito","Robertoide","Anastasioide"]
-    const [connectedUsers,setConnectedUsers] = useState(usuarios.map( (user,index) => <p id={index}>{user}</p>));
+    const [connectedUsers,setConnectedUsers] = useState(/*usuarios.map( (user,index) => <p key={index} id={index}>{user}</p>)*/);
     const [data,setData] = useState();
     const [chatMessages,setChatMessages] = useState();
     const [cookies, setCookie,removeCookies] = useCookies(['userName']);   
@@ -26,25 +26,38 @@ export default function Chat(){
     useEffect(() => {
         socket.on('connect', () => {
           setIsConnected(true);
+          socket.emit("userName",cookies.userName)
         });
     
         socket.on('disconnect', () => {
           setIsConnected(false);
+          socket.emit("userName_disconnect",cookies.userName)
         });
     
         socket.on('pong', () => {
           setLastPong(new Date().toISOString());
         });
+
+        socket.on("Send_msg", (msg) => {
+            console.log(msg);
+            setChatMessages(chatMessages =>{ const mensaje = JSON.parse(msg); return [...chatMessages, <p className="message" key={mensaje["date"]}>{mensaje["author"]}: {mensaje["text"]}</p>] });
+        })
     
         return () => {
           socket.off('connect');
           socket.off('disconnect');
           socket.off('pong');
+          socket.off("Send_msg");
         };
       }, []);
 
 
-
+    useEffect(
+        () => {
+            const chatList = document.querySelector(".chat_messages_list");
+            chatList.scrollTop = chatList.scrollHeight
+        }
+    ,[chatMessages])
     useEffect(
         () => {
             fetch("/messages",{
@@ -61,7 +74,7 @@ export default function Chat(){
         ,[])
 
         useEffect(  ()=>{ if(data){
-            setChatMessages( data["messages"].map( dato => <p className="message">{dato["author"]}: {dato["text"]}</p>))}
+            setChatMessages( data["messages"].map( dato => <p key={dato["date"]} className="message">{dato["author"]}: {dato["text"]}</p>))}
         },[data])
     
     function actualizeMessage(e){
@@ -75,6 +88,7 @@ export default function Chat(){
     async function sendMessage(e){
         e.preventDefault();
         try{
+            if(message){
             await fetch("/messages",{
                 headers: {
                     'Accept': 'application/json',
@@ -92,7 +106,9 @@ export default function Chat(){
                 "date" : (Date.now()),
                 "author" : (cookies.userName)
             }))
+            setChatMessages([...new Set([...chatMessages, ...[<p key={Date.now()} className="message">{cookies.userName}: {message}</p>]])]);
             setMessage("");
+            }
         } catch(err){
             console.log(err);
         }
@@ -102,8 +118,7 @@ export default function Chat(){
 
     return(
         <div>
-        {cookies.userName ? <h2>{"Soy el chat" + cookies.userName}</h2> : <Navigate to="/"></Navigate>}
-        <button onClick={borrarUserName}>Borrar Nombre</button>
+        {cookies.userName ? <button onClick={borrarUserName}>Cambiar Usuario</button> : <Navigate to="/"></Navigate>}
         <div className="chat">
             <h2 className="chat_title">#General</h2>
             <div className="chat_principal">
