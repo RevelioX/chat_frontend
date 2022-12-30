@@ -18,7 +18,7 @@ export default function Chat(){
     const usuarios = ["Pedrito","Juanito","Robertoide","Anastasioide"]
     const [connectedUsers,setConnectedUsers] = useState(/*usuarios.map( (user,index) => <p key={index} id={index}>{user}</p>)*/);
     const [data,setData] = useState();
-    const [chatMessages,setChatMessages] = useState();
+    const [chatMessages,setChatMessages] = useState([]);
     const [cookies, setCookie,removeCookies] = useCookies(['userName']);   
     const location = useLocation();
     const [message,setMessage] = useState("");
@@ -58,6 +58,7 @@ export default function Chat(){
             chatList.scrollTop = chatList.scrollHeight
         }
     ,[chatMessages])
+
     useEffect(
         () => {
             fetch("/messages",{
@@ -67,7 +68,7 @@ export default function Chat(){
                     return response.json()
                 }
             })
-            .then( res => setData(res))
+            .then(res => setData(res))
             .catch(err => console.log(err))
         }  
           
