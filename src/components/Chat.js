@@ -4,7 +4,7 @@ import { useCookies } from 'react-cookie';
 import { useNavigate, Navigate, redirect, useLocation } from 'react-router';
 import io from 'socket.io-client';
 
-const socket = io("/",{
+const socket = io("https://simple-chat-backend.onrender.com/",{
     withCredentials: true,
     extraHeaders: {
     "my-custom-header": "abcd"}}
@@ -62,7 +62,7 @@ export default function Chat(){
     useEffect(
         () => {
             fetch("/messages",{
-                mode: "no-cors",
+                mode: "navigate",
                 method:'GET'
             }).then(response => {
                 if(response.ok){
@@ -92,7 +92,7 @@ export default function Chat(){
         try{
             if(message){
             await fetch("/messages",{
-                mode:"no-cors",
+                mode:"navigate",
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
