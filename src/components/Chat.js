@@ -62,7 +62,6 @@ export default function Chat(){
     useEffect(
         () => {
             fetch("https://simple-chat-backend.onrender.com/messages",{
-                mode: "navigate",
                 method:'GET'
             }).then(response => {
                 if(response.ok){
@@ -92,7 +91,6 @@ export default function Chat(){
         try{
             if(message){
             await fetch("https://simple-chat-backend.onrender.com/messages",{
-                mode:"navigate",
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
