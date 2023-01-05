@@ -11,11 +11,11 @@ import SocketClient from "socket.io-client";
 
 const router = createBrowserRouter([
   {
-    path: 'https://simple-chat-frontend.onrender.com/',
+    path: '/',
     element: <Login/>
   },
   {
-    path: 'https://simple-chat-frontend.onrender.com/chat',
+    path: '/chat',
     element: <Chat/>
   }
 ])
