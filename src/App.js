@@ -19,8 +19,9 @@ const router = createBrowserRouter([
     element: <Chat/>
   }
 ])
+
 function App() {
-  const socket = SocketClient("http://localhost:3080");
+  const socket = SocketClient("https://simple-chat-backend.onrender.com");
 
  return (
   <div>
