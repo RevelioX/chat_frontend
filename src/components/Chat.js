@@ -4,7 +4,7 @@ import { useCookies } from 'react-cookie';
 import { useNavigate, Navigate, redirect, useLocation } from 'react-router';
 import io from 'socket.io-client';
 
-const socket = io("http://localhost:3080",{
+const socket = io("https://simple-chat-backend.onrender.com",{
     withCredentials: true,
     extraHeaders: {
     "my-custom-header": "abcd"}}
